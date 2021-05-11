@@ -23,6 +23,35 @@ supported_amino_acids = (
 
 
 def ramachandran(model: tuple = None, resn: tuple = None):
+    """A simple function to generate a Ramachandran plot from a pymol instance. If model and/or resn is provided as an argument it limits the selection within the instance.
+
+    Parameters
+    ----------
+    model : tuple, optional
+        Model/enzyme within the pymol instance, by default None
+    resn : tuple, optional
+        Resn/residue within the model to limit phi-psi points, by default None
+
+    Raises
+    ------
+    TypeError
+        Trigger if model input isn't a string, list or tuple.
+    TypeError
+        Trigger if any model in a list or tuple isn't a string.
+    ValueError
+        Trigger if model isn't in the current pymol instance.
+    ValueError
+        Trigger if model isn't in the current pymol instance.
+    TypeError
+        Trigger if resn isn't a string, list or tuple.
+    ValueError
+        Trigger if resn isn't supported by pymol.
+    TypeError
+        Trigger if resn in a list or tuple isn't a string.
+    ValueError
+        Trigger if resn isn't supported by pymol.
+    """
+
     # Validate that 'model' input is supported.
     if not isinstance(model, (str, list, tuple)) and model is not None:
         raise TypeError("'model' must be type 'str', 'list' or 'tuple'.")
@@ -63,8 +92,6 @@ def ramachandran(model: tuple = None, resn: tuple = None):
         model = local_model
         del local_model
 
-    # TODO: Batch, one plot for multiple models if list/tuple
-
     # Cycle through models
     for element in model:
         # Select model and/or from resn depending on condition.
@@ -90,10 +117,13 @@ def ramachandran(model: tuple = None, resn: tuple = None):
         plt.xlabel("\u03C6")
         plt.ylabel("\u03C8")
 
-        plt.xlim(-180, 180)
-        plt.ylim(-180, 180)
+        min_bound = -180
+        max_bound = +180
 
-        ticks = numpy.arange(-180, 180 + 1, 45, dtype=int)
+        plt.xlim(min_bound, max_bound)
+        plt.ylim(min_bound, max_bound)
+
+        ticks = numpy.arange(min_bound, max_bound + 1, 45, dtype=int)
 
         plt.xticks(ticks)
         plt.yticks(ticks)
@@ -108,12 +138,13 @@ def ramachandran(model: tuple = None, resn: tuple = None):
             "data/density_estimate.csv", delimiter=",")
 
         density = numpy.log(numpy.rot90(density_estimate_data))
-        plt.imshow(density, cmap="inferno", extent=(-180, 180) * 2, alpha=0.70)
+        plt.imshow(density, cmap="inferno", extent=(
+            min_bound, max_bound) * 2, alpha=0.70)
 
         contour = numpy.rot90(numpy.fliplr(density_estimate_data))
         plt.contour(contour, colors="k", linewidths=0.5,
                     levels=[10**i for i in range(-7, 0)],
-                    antialiased=True, extent=(-180, 180) * 2, alpha=0.55)
+                    antialiased=True, extent=(min_bound, max_bound) * 2, alpha=0.55)
 
         if resn is not None:
             plt.scatter(phi, psi, marker=".", s=3, c="k")
