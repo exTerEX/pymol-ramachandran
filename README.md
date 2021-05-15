@@ -42,4 +42,4 @@ $ ramaplot(model=["(pdb-id)", "(pdb-id)", ...], resn=["(residue)", "(residue)", 
 
 ## License
 
-This project is licensed under MIT. See [LICENSE](LICENSE) for more information.
+This project is licensed under `ECL-2.0`. See [LICENSE](LICENSE) for more information.
