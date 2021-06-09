@@ -123,4 +123,4 @@ def ramachandran(model: tuple = None, resn: tuple = None):
         plt.show()
 
 
-cmd.extend("ramaplot", ramachandran)
+cmd.extend("ramachandran", ramachandran)
