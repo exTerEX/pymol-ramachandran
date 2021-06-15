@@ -23,7 +23,9 @@ supported_amino_acids = {
 }
 
 
-def ramachandran(model: Optional[tuple] = None, resn: Optional[Union[str, tuple]] = None) -> NoReturn:
+def ramachandran(model: Optional[tuple] = None,
+                 resn: Optional[Union[str, tuple]] = None,
+                 cResn: Optional[bool] = False) -> NoReturn:
     """A simple function to generate a Ramachandran plot from a pymol instance. If model and/or resn is provided as an argument it limits the selection within the instance.
 
     Parameters
@@ -160,9 +162,10 @@ def ramachandran(model: Optional[tuple] = None, resn: Optional[Union[str, tuple]
             min_bound, max_bound) * 2, alpha=0.70)
 
         contour = numpy.rot90(numpy.fliplr(density_estimate_data))
-        plt.contour(contour, colors="k", linewidths=0.5,
-                    levels=[10**i for i in range(-7, 0)],
-                    antialiased=True, extent=(min_bound, max_bound) * 2, alpha=0.55)
+        plt.contour(
+            contour, colors="k", linewidths=0.5,
+            levels=[10 ** i for i in range(-7, 0)],
+            antialiased=True, extent=(min_bound, max_bound) * 2, alpha=0.55)
 
         # Seperate phi_psi into phi and psi.
         for key, value in enumerate(phi_psi):
