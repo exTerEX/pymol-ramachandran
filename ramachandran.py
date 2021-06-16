@@ -180,7 +180,7 @@ def ramachandran(model: Optional[tuple] = None,
 
         # Display favorable density as heat profile
         ax.imshow(density, cmap="inferno", extent=(
-            min_bound, max_bound) * 2, alpha=0.70)
+            min_bound, max_bound) * 2, alpha=0.70, interpolation="lanczos")
 
         # Plot contour lines
         contour = numpy.rot90(numpy.fliplr(favorable_density_data))
