@@ -11,6 +11,8 @@
 # the License.
 
 from pymol import cmd  # type: ignore
+import matplotlib.pyplot
+import matplotlib.ticker
 import matplotlib.pyplot as plt
 import numpy
 from typing import Union, NoReturn, Optional
@@ -34,6 +36,8 @@ def ramachandran(model: Optional[tuple] = None,
         Model/enzyme within the pymol instance, by default None
     resn : tuple, optional
         Resn/residue within the model to limit phi-psi points, by default None
+    cResn : bool, optional
+        If each amino acid should have a unique color and label in legder.
     """
 
     local_model = cmd.get_names(type="public_objects")
@@ -129,45 +133,63 @@ def ramachandran(model: Optional[tuple] = None,
         for value in sString:
             cmd.delete(value)
 
-        plt.figure(figsize=(8.5, 5.0), dpi=100)
-        plt.title(f"Ramachandran plot (PDBid: {element.upper()})")
+        # TODO: Move to lower-level fig + ax interaction with matplotlib
 
-        plt.axes().set_aspect("equal", "box")
+        # -- Plot
+        fig, ax = matplotlib.pyplot.subplots(figsize=(8.5, 5.0), dpi=100)
+        fig.tight_layout()
+        fig.subplots_adjust(bottom=0.10, top=0.95)
 
-        plt.xlabel("\u03C6")
-        plt.ylabel("\u03C8")
+        # Set title of plot
+        ax.set_title(f"Ramachandran plot ({element.lower()})", fontsize=12)
 
+        # Set same x and y scaling
+        ax.set_aspect("equal", "box")
+
+        # Set x- and y-label
+        ax.set_xlabel("\u03C6", fontsize=12)
+        # TODO: ylabel to horizontal
+        ax.set_ylabel("\u03C8", fontsize=12)
+
+        # Set x- and y-limit for plot
         min_bound = -180
         max_bound = +180
 
-        plt.xlim(min_bound, max_bound)
-        plt.ylim(min_bound, max_bound)
+        ax.set_xlim(min_bound, max_bound)
+        ax.set_ylim(min_bound, max_bound)
 
-        ticks = numpy.arange(min_bound, max_bound + 1, 45, dtype=int)
+        # Specify x- and y-tick frequency
+        ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(45))
+        ax.xaxis.set_minor_locator(matplotlib.ticker.AutoMinorLocator(n=5))
 
-        plt.xticks(ticks)
-        plt.yticks(ticks)
+        ax.yaxis.set_major_locator(matplotlib.ticker.MultipleLocator(45))
+        ax.yaxis.set_minor_locator(matplotlib.ticker.AutoMinorLocator(n=5))
 
-        plt.axhline(y=0, color="k", lw=0.5)
-        plt.axvline(x=0, color="k", lw=0.5)
+        # Set ax-lines
+        ax.axhline(y=0, color="k", lw=0.5)
+        ax.axvline(x=0, color="k", lw=0.5)
 
-        plt.grid(b=None, which="major",
-                 axis="both", color="k", alpha=0.2)
+        # Set grid
+        ax.grid(color="k", alpha=0.2)
 
-        density_estimate_data = numpy.loadtxt(
-            "data/density_estimate.csv", delimiter=",")
+        # Load favorable density data
+        favorable_density_data = numpy.loadtxt(
+            "data/favorable_density.csv", delimiter=",")
 
-        density = numpy.log(numpy.rot90(density_estimate_data))
-        plt.imshow(density, cmap="inferno", extent=(
+        density = numpy.log(numpy.rot90(favorable_density_data))
+
+        # Display favorable density as heat profile
+        ax.imshow(density, cmap="inferno", extent=(
             min_bound, max_bound) * 2, alpha=0.70)
 
-        contour = numpy.rot90(numpy.fliplr(density_estimate_data))
+        # Plot contour lines
+        contour = numpy.rot90(numpy.fliplr(favorable_density_data))
         plt.contour(
             contour, colors="k", linewidths=0.5,
             levels=[10 ** i for i in range(-7, 0)],
             antialiased=True, extent=(min_bound, max_bound) * 2, alpha=0.55)
 
-        # Seperate phi_psi into phi and psi.
+        # Add phi-psi data
         for key, value in enumerate(phi_psi):
             try:
                 phi, psi = zip(*value.values())
@@ -177,11 +199,18 @@ def ramachandran(model: Optional[tuple] = None,
                 else:
                     phi, psi = (None, None)
 
-            # TODO: Variable for color + label customization
+            # Apply independent color and ledger if specified
+            if cResn:
+                ax.scatter(
+                    phi, psi, marker=".", s=3,
+                    label=f"{resn[key]} ({sCount[key]} residues)")
+                ax.legend(
+                    bbox_to_anchor=(1.0, 0.9, 1.0, 0.125),
+                    loc="upper left", borderaxespad=0.0, framealpha=0.0)
+            else:
+                plt.scatter(phi, psi, marker=".", s=3, c="k")
 
-            plt.scatter(phi, psi, marker=".", s=3, c="k")
-
-        plt.show()
+        fig.show()
 
 
 cmd.extend("ramachandran", ramachandran)
