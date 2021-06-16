@@ -203,7 +203,7 @@ def ramachandran(model: Optional[tuple] = None,
             if cResn:
                 ax.scatter(
                     phi, psi, marker=".", s=3,
-                    label=f"{resn[key]} ({sCount[key]} residues)")
+                    label=f"{resn[key][0].upper()}{resn[key][1:].lower()}")
                 ax.legend(
                     bbox_to_anchor=(1.0, 0.9, 1.0, 0.125),
                     loc="upper left", borderaxespad=0.0, framealpha=0.0)
