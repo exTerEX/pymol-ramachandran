@@ -141,7 +141,7 @@ def ramachandran(model: Optional[tuple] = None,
         fig.subplots_adjust(bottom=0.10, top=0.95)
 
         # Set title of plot
-        ax.set_title(f"Ramachandran plot ({element.lower()})", fontsize=12)
+        ax.set_title(f"Ramachandran plot ({element.upper()})", fontsize=12)
 
         # Set same x and y scaling
         ax.set_aspect("equal", "box")
