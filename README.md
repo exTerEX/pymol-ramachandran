@@ -2,6 +2,10 @@
 
 A simple script to generate a Ramachandran plot from structures within pymol.
 
+![Ramachandran plot - Transcription factor(TFIIH)](assets/img/sample.png)
+
+Over is an example of the generated ramachandran plot using the Yeast TFIIH structure from PDB.
+
 ## Installation / How-to-use
 
 1. Download the repository to your computer. Store the code in $pwd (preferred). Find this directory by running,
