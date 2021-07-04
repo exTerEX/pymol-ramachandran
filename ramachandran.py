@@ -10,12 +10,13 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-from pymol import cmd  # type: ignore
+from typing import NoReturn, Optional, Union
+
 import matplotlib.pyplot
-import matplotlib.ticker
 import matplotlib.pyplot as plt
+import matplotlib.ticker
 import numpy
-from typing import Union, NoReturn, Optional
+from pymol import cmd  # type: ignore
 
 supported_amino_acids = {
     "r": "arg", "h": "his", "k": "lys", "d": "asp", "e": "glu", "s": "ser",
