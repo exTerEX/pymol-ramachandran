@@ -1,0 +1,33 @@
+name: Run tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions: read-all
+
+jobs:
+  format:
+    name: Check format
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: python
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install autopep8
+
+      - name: Test Format
+        run: |
+          if [[ $(python -m autopep8 -j 0 -d -r -a --experimental .) ]]; then
+            echo "Run autopep8 with --aggressive and --experimental parameters."
+            exit 1
+          fi
