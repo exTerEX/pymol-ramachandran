@@ -1,0 +1,11 @@
+name: ramachandran
+channels:
+  - schrodinger
+  - conda-forge
+  - anaconda
+  - defaults
+dependencies:
+  - pip
+  - pymol=2.5
+  - python=3.8
+  - autopep8
